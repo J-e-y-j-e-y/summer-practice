@@ -1,4 +1,4 @@
-package com.haulmont.testtask;
+package com.practice.office;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;

@@ -1,4 +1,4 @@
-Test Task
+Summer practice: realty-exchange-office
 =========
 
 Prerequisites
