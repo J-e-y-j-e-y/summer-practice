@@ -41,10 +41,11 @@ public class RealtyForm extends FormLayout {
         components.addComponent((Component) update);
         components.addComponent((Component) delete);
 
-        this.addComponents(neighbourhood, address, cadastralNumber, components);
-        binder.bind(square, sq -> String.valueOf(sq), null);
-        binder.bind(roomNumber, sq -> String.valueOf(sq), null);
-        binder.bind(price, sq -> String.valueOf(sq), null);
+
+        binder.bind(square, Realty::getStrSquare, Realty::setStrSquare);
+        binder.bind(roomNumber, Realty::getStrRoomNumber, Realty::setStrRoomNumber);
+        binder.bind(price, Realty::getStrPrice, Realty::setStrPrice);
+        this.addComponents(neighbourhood, address,  square, roomNumber, price, cadastralNumber, components);
         binder.bindInstanceFields(this);
     }
     public void setRealty(Realty realty) {
