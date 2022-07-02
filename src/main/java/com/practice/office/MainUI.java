@@ -6,6 +6,9 @@ import com.practice.office.clients.ClientForm;
 import com.practice.office.realties.Realty;
 import com.practice.office.realties.RealtyController;
 import com.practice.office.realties.RealtyForm;
+import com.practice.office.requests.Request;
+import com.practice.office.requests.RequestController;
+import com.practice.office.requests.RequestForm;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -35,6 +38,14 @@ public class MainUI extends UI {
     Button addRealty = new Button("Add new realty");
     HorizontalLayout realtyTool = new HorizontalLayout(realtyfilterText, addRealty);
 
+    private RequestController requestController = new RequestController(clientController, realtyController);
+    private Grid<Request> requestGrid = new Grid<>(Request.class);
+    private RequestForm requestForm = new RequestForm(this, clientController, realtyController, requestController);
+    private TextField requestfilterText = new TextField();
+    HorizontalLayout requestContent = new HorizontalLayout(requestGrid, requestForm);
+    Button addRequest = new Button("Add new request");
+    HorizontalLayout requestTool = new HorizontalLayout(requestfilterText, addRequest);
+
     static{
         boolean con = AbstractController.setConnection();
         System.out.println("CONNECTION : " + con);
@@ -55,12 +66,17 @@ public class MainUI extends UI {
             realtiesGrid.asSingleSelect().clear();
             realtyForm.addButton();
         });
-
+        addRequest.addClickListener(e -> {
+            requestGrid.asSingleSelect().clear();
+            requestForm.addButton();
+        });
 
         clientsGrid.asSingleSelect().addValueChangeListener(event ->
                 clientForm.setClient(clientsGrid.asSingleSelect().getValue()));
         realtiesGrid.asSingleSelect().addValueChangeListener(event ->
                 realtyForm.setRealty(realtiesGrid.asSingleSelect().getValue()));
+        requestGrid.asSingleSelect().addValueChangeListener(event ->
+                requestForm.setRequest(requestGrid.asSingleSelect().getValue()));
 
         MenuBar bar = new MenuBar();
 
@@ -96,6 +112,22 @@ public class MainUI extends UI {
             }
         });
 
+        Button requestsButton = new Button("Requests");
+        requestsButton.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                requestForm.setRequest(null);
+                requestGrid.setColumns("purpose", "client", "realty", "dm");
+                updateRequests();
+                requestfilterText.setPlaceholder("Filter by purpose...");
+                requestfilterText.setValueChangeMode(ValueChangeMode.EAGER);
+                requestfilterText.addValueChangeListener(e -> updateClients());
+
+                requestContent.setVisible(true);
+                requestTool.setVisible(true);
+            }
+        });
+
         bar.addItem(clientsButton.getCaption(), new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem menuItem) {
@@ -106,6 +138,10 @@ public class MainUI extends UI {
                 realtyForm.setRealty(null);
                 realtyContent.setVisible(false);
                 realtyTool.setVisible(false);
+
+                requestForm.setRequest(null);
+                requestContent.setVisible(false);
+                requestTool.setVisible(false);
 
                 clientsButton.click();
             }
@@ -122,7 +158,30 @@ public class MainUI extends UI {
                 realtyContent.setVisible(false);
                 realtyTool.setVisible(false);
 
+                requestForm.setRequest(null);
+                requestContent.setVisible(false);
+                requestTool.setVisible(false);
+
                 realtiesButton.click();
+            }
+        });
+
+        bar.addItem(requestsButton.getCaption(), new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+                clientForm.setClient(null);
+                clientContent.setVisible(false);
+                clientTool.setVisible(false);
+
+                realtyForm.setRealty(null);
+                realtyContent.setVisible(false);
+                realtyTool.setVisible(false);
+
+                requestForm.setRequest(null);
+                requestContent.setVisible(false);
+                requestTool.setVisible(false);
+
+                requestsButton.click();
             }
         });
 
@@ -138,6 +197,10 @@ public class MainUI extends UI {
         realtyContent.setVisible(false);
         realtyTool.setVisible(false);
         vertLayout.addComponents(realtyTool, realtyContent);
+
+        requestContent.setVisible(false);
+        requestTool.setVisible(false);
+        vertLayout.addComponents(requestTool, requestContent);
 
         setContent(vertLayout);
     }
@@ -171,6 +234,22 @@ public class MainUI extends UI {
                     filtered.add(c);
             }
             realtiesGrid.setItems(filtered);
+        }
+    }
+
+    public void updateRequests(){
+        HashMap<Integer, Request> requests = requestController.getAll();
+        String filter = requestfilterText.getValue();
+        if(filter.equals(""))
+            requestGrid.setItems(new ArrayList<>(requests.values()));
+        else {
+            ArrayList<Request> filtered = new ArrayList<>();
+            for (Map.Entry<Integer, Request> entry : requests.entrySet()) {
+                Request c = entry.getValue();
+                if (c.getPurpose().toString().startsWith(filter))
+                    filtered.add(c);
+            }
+            requestGrid.setItems(filtered);
         }
     }
 }

@@ -47,9 +47,9 @@ public class RealtyForm extends FormLayout {
         binder.bind(price, sq -> String.valueOf(sq), null);
         binder.bindInstanceFields(this);
     }
-    public void setRealty(Realty Realty) {
-        binder.setBean(Realty);
-        if (Realty == null) {
+    public void setRealty(Realty realty) {
+        binder.setBean(realty);
+        if (realty == null) {
             setVisible(false);
         } else {
             add.setVisible(false);

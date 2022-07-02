@@ -51,7 +51,7 @@ public class RealtyController extends AbstractController {
     }
 
     @Override
-    public Object getEntityById(Object id) {
+    public Realty getEntityById(Object id) {
         int realtyId = (int) id;
         return realties.get(realtyId);
     }
