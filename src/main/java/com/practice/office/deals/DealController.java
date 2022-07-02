@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 
-import static com.practice.office.utils.Constants.SELECT_SQL_QUERY_PATH;
+import static com.practice.office.utils.Constants.*;
 
 public class DealController extends AbstractController {
     @Getter
@@ -63,7 +63,34 @@ public class DealController extends AbstractController {
 
     @Override
     public Object update(Object entity) {
-        return null;
+        Deal updatedDeal = (Deal) entity;
+        int dealId = updatedDeal.getId();
+
+        Deal deal = deals.get(dealId);
+        deal.setSeller(updatedDeal.getSeller());
+        deal.setBuyer(updatedDeal.getBuyer());
+        deal.setRealty(updatedDeal.getRealty());
+        deal.setDm(updatedDeal.getDm());
+
+        String query = UPDATE_DEALS_SQL;
+        PreparedStatement ps = getPrepareStatement(query);
+        int rows = 0;
+        try {
+            ps.setInt(1, deal.getSeller().getId());
+            ps.setInt(2, deal.getBuyer().getId());
+            ps.setInt(3, deal.getRealty().getId());
+            ps.setTimestamp(4, deal.getDm());
+            ps.setInt(5, dealId);
+            System.out.println(ps);
+            rows = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+        if(rows != 1)
+            return -1;
+        return rows;
     }
 
     @Override
@@ -74,11 +101,47 @@ public class DealController extends AbstractController {
 
     @Override
     public boolean delete(Object id) {
-        return false;
+        Deal deal = (Deal) id;
+
+        int dealId = deal.getId();
+        deals.remove(dealId);
+        int rows = 0;
+
+        String query = DELETE_FROM_SQL;
+        query = query.replace(TABLE, tableName);
+        PreparedStatement ps = getPrepareStatement(query);
+        try {
+            ps.setInt(1, dealId);
+            rows = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+
+        return rows == 1;
     }
 
     @Override
     public boolean create(Object entity) {
-        return false;
+        Deal deal = (Deal) entity;
+
+        String query = INSERT_INTO_DEALS_SQL;
+        PreparedStatement ps = getPrepareStatement(query);
+        int rows = 0;
+        try {
+            ps.setInt(1, deal.getId());
+            ps.setInt(2, deal.getSeller().getId());
+            ps.setInt(3, deal.getBuyer().getId());
+            ps.setInt(4, deal.getRealty().getId());
+            ps.setTimestamp(5, deal.getDm());
+
+            rows = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+        return rows == 1;
     }
 }

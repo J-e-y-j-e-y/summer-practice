@@ -53,8 +53,8 @@ public class DealForm extends FormLayout {
         realtyController.getAll().values().forEach(realty -> realtiesList.add(realty.toString()));
         realty.setItems(realtiesList);
 
-        this.addComponents(components);
-        binder.bind(dm, dm -> new SimpleDateFormat("yyyy MM dd").format(dm), null);
+        this.addComponents(seller, buyer, realty, dm, components);
+        binder.bind(dm, Deal::getStrDm, Deal::setStrDm);
 
         binder.bind(seller, new ValueProvider<Deal, String>() {
             @Override
