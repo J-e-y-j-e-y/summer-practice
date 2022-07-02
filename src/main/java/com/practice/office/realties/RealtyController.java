@@ -1,4 +1,4 @@
-package com.practice.office.clients;
+package com.practice.office.realties;
 
 import com.practice.office.AbstractController;
 import lombok.Getter;
@@ -13,37 +13,36 @@ import java.util.HashMap;
 
 import static com.practice.office.utils.Constants.SELECT_SQL_QUERY_PATH;
 
-public class ClientController extends AbstractController {
+public class RealtyController extends AbstractController {
     @Getter
-    private static HashMap<Integer, Client> clients = new HashMap<>();
-    private final String tableName = "clients";
+    private static HashMap<Integer, Realty> realties = new HashMap<>();
+    private final String tableName = "realties";
 
     @SneakyThrows
     @Override
-    public HashMap<Integer, Client> getAll() {
+    public HashMap<Integer, Realty> getAll() {
         String query = FileUtils.readFileToString(FileUtils.getFile(SELECT_SQL_QUERY_PATH), Charset.defaultCharset());
         query = query.replace("?", tableName);
-        System.out.println(query);
         PreparedStatement ps = getPrepareStatement(query);
-        System.out.println(ps);
         try {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt(1);
-                String name = rs.getString(2);
-                String surname = rs.getString(3);
-                String fathername = rs.getString(4);
-                String phone = rs.getString(5);
-                String email = rs.getString(6);
-                Client client = new Client(id, name, surname, fathername, phone, email);
-                clients.put(id, client);
+                String neighbourhood = rs.getString(2);
+                String address = rs.getString(3);
+                double square = rs.getDouble(4);
+                int roomNumber = rs.getInt(5);
+                double price = rs.getDouble(6);
+                String cadastralNumber = rs.getString(7);
+                Realty realty = new Realty(id, neighbourhood, address, square, roomNumber, price, cadastralNumber);
+                realties.put(id, realty);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closePrepareStatement(ps);
         }
-        return clients;
+        return realties;
     }
 
     @Override
@@ -52,9 +51,9 @@ public class ClientController extends AbstractController {
     }
 
     @Override
-    public Client getEntityById(Object id) {
-        int clientId = (int) id;
-        return clients.get(clientId);
+    public Object getEntityById(Object id) {
+        int realtyId = (int) id;
+        return realties.get(realtyId);
     }
 
     @Override

@@ -16,6 +16,10 @@ public class ClientForm extends FormLayout {
     private final Client EMPTY = new Client();
 
     private TextField name = new TextField("name");
+    private TextField surname = new TextField("surname");
+    private TextField fathername = new TextField("fathername");
+    private TextField phone = new TextField("phone");
+    private TextField email = new TextField("email");
 
     private Button add = new Button("Add");
     private Button update = new Button("Update");
@@ -38,7 +42,7 @@ public class ClientForm extends FormLayout {
         components.addComponent((Component) update);
         components.addComponent((Component) delete);
 
-        this.addComponents(name, components);
+        this.addComponents(name, surname, fathername,  phone, email, components);
         binder.bindInstanceFields(this);
     }
     public void setClient(Client Client) {
