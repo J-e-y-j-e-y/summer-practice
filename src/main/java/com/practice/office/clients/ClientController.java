@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import static com.practice.office.utils.Constants.SELECT_SQL_QUERY_PATH;
+import static com.practice.office.utils.Constants.*;
 
 public class ClientController extends AbstractController {
     @Getter
@@ -22,7 +22,7 @@ public class ClientController extends AbstractController {
     @Override
     public HashMap<Integer, Client> getAll() {
         String query = FileUtils.readFileToString(FileUtils.getFile(SELECT_SQL_QUERY_PATH), Charset.defaultCharset());
-        query = query.replace("?", tableName);
+        query = query.replace(QUESTION, tableName);
         System.out.println(query);
         PreparedStatement ps = getPrepareStatement(query);
         System.out.println(ps);
@@ -48,7 +48,36 @@ public class ClientController extends AbstractController {
 
     @Override
     public Object update(Object entity) {
-        return null;
+        Client updatedClient = (Client) entity;
+        int client_id = updatedClient.getId();
+
+        Client client = clients.get(client_id);
+        client.setName(updatedClient.getName());
+        client.setSurname(updatedClient.getSurname());
+        client.setFathername(updatedClient.getFathername());
+        client.setPhone(updatedClient.getPhone());
+        client.setEmail(updatedClient.getEmail());
+
+        String query = UPDATE_CLIENTS_SQL;
+        PreparedStatement ps = getPrepareStatement(query);
+        int rows = 0;
+        try {
+            ps.setString(1, client.getName());
+            ps.setString(2, client.getSurname());
+            ps.setString(3, client.getFathername());
+            ps.setString(4, client.getPhone());
+            ps.setString(5, client.getEmail());
+            ps.setInt(6, client.getId());
+            System.out.println(ps);
+            rows = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+        if(rows != 1)
+            return -1;
+        return rows;
     }
 
     @Override
@@ -59,11 +88,49 @@ public class ClientController extends AbstractController {
 
     @Override
     public boolean delete(Object id) {
-        return false;
+        Client client = (Client) id;
+        // delete client
+
+        int client_id = client.getId();
+        clients.remove(client_id);
+        int rows = 0;
+
+        String query = DELETE_FROM_SQL;
+        query = query.replace(TABLE, tableName);
+        PreparedStatement ps = getPrepareStatement(query);
+        try {
+            ps.setInt(1, client.getId());
+            rows = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+
+        return rows == 1;
     }
 
     @Override
     public boolean create(Object entity) {
-        return false;
+        Client client = (Client) entity;
+
+        String query = INSERT_INTO_CLIENTS_SQL;
+        PreparedStatement ps = getPrepareStatement(query);
+        int rows = 0;
+        try {
+            ps.setInt(1, client.getId());
+            ps.setString(2, client.getName());
+            ps.setString(3, client.getSurname());
+            ps.setString(4, client.getFathername());
+            ps.setString(5, client.getPhone());
+            ps.setString(6, client.getEmail());
+
+            rows = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closePrepareStatement(ps);
+        }
+        return rows == 1;
     }
 }
