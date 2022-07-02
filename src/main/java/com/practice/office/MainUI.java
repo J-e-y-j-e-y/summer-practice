@@ -3,6 +3,9 @@ package com.practice.office;
 import com.practice.office.clients.Client;
 import com.practice.office.clients.ClientController;
 import com.practice.office.clients.ClientForm;
+import com.practice.office.deals.Deal;
+import com.practice.office.deals.DealController;
+import com.practice.office.deals.DealForm;
 import com.practice.office.realties.Realty;
 import com.practice.office.realties.RealtyController;
 import com.practice.office.realties.RealtyForm;
@@ -46,6 +49,14 @@ public class MainUI extends UI {
     Button addRequest = new Button("Add new request");
     HorizontalLayout requestTool = new HorizontalLayout(requestfilterText, addRequest);
 
+    private DealController dealController = new DealController(clientController, realtyController);
+    private Grid<Deal> dealGrid = new Grid<>(Deal.class);
+    private DealForm dealForm = new DealForm(this, clientController, realtyController, dealController);
+    private TextField dealfilterText = new TextField();
+    HorizontalLayout dealContent = new HorizontalLayout(dealGrid, dealForm);
+    Button addDeal = new Button("Add new deal");
+    HorizontalLayout dealTool = new HorizontalLayout(dealfilterText, addDeal);
+
     static{
         boolean con = AbstractController.setConnection();
         System.out.println("CONNECTION : " + con);
@@ -70,6 +81,10 @@ public class MainUI extends UI {
             requestGrid.asSingleSelect().clear();
             requestForm.addButton();
         });
+        addDeal.addClickListener(e -> {
+            dealGrid.asSingleSelect().clear();
+            dealForm.addButton();
+        });
 
         clientsGrid.asSingleSelect().addValueChangeListener(event ->
                 clientForm.setClient(clientsGrid.asSingleSelect().getValue()));
@@ -77,6 +92,8 @@ public class MainUI extends UI {
                 realtyForm.setRealty(realtiesGrid.asSingleSelect().getValue()));
         requestGrid.asSingleSelect().addValueChangeListener(event ->
                 requestForm.setRequest(requestGrid.asSingleSelect().getValue()));
+        dealGrid.asSingleSelect().addValueChangeListener(event ->
+                dealForm.setDeal(dealGrid.asSingleSelect().getValue()));
 
         MenuBar bar = new MenuBar();
 
@@ -128,6 +145,22 @@ public class MainUI extends UI {
             }
         });
 
+        Button dealsButton = new Button("Deals");
+        dealsButton.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent clickEvent) {
+                dealForm.setDeal(null);
+                dealGrid.setColumns("seller", "buyer", "realty", "dm");
+                updateDeals();
+                dealfilterText.setPlaceholder("Filter by realty...");
+                dealfilterText.setValueChangeMode(ValueChangeMode.EAGER);
+                dealfilterText.addValueChangeListener(e -> updateClients());
+
+                dealContent.setVisible(true);
+                dealTool.setVisible(true);
+            }
+        });
+
         bar.addItem(clientsButton.getCaption(), new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem menuItem) {
@@ -142,6 +175,10 @@ public class MainUI extends UI {
                 requestForm.setRequest(null);
                 requestContent.setVisible(false);
                 requestTool.setVisible(false);
+
+                dealForm.setDeal(null);
+                dealContent.setVisible(false);
+                dealTool.setVisible(false);
 
                 clientsButton.click();
             }
@@ -162,6 +199,10 @@ public class MainUI extends UI {
                 requestContent.setVisible(false);
                 requestTool.setVisible(false);
 
+                dealForm.setDeal(null);
+                dealContent.setVisible(false);
+                dealTool.setVisible(false);
+
                 realtiesButton.click();
             }
         });
@@ -181,7 +222,34 @@ public class MainUI extends UI {
                 requestContent.setVisible(false);
                 requestTool.setVisible(false);
 
+                dealForm.setDeal(null);
+                dealContent.setVisible(false);
+                dealTool.setVisible(false);
+
                 requestsButton.click();
+            }
+        });
+
+        bar.addItem(dealsButton.getCaption(), new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+                clientForm.setClient(null);
+                clientContent.setVisible(false);
+                clientTool.setVisible(false);
+
+                realtyForm.setRealty(null);
+                realtyContent.setVisible(false);
+                realtyTool.setVisible(false);
+
+                requestForm.setRequest(null);
+                requestContent.setVisible(false);
+                requestTool.setVisible(false);
+
+                dealForm.setDeal(null);
+                dealContent.setVisible(false);
+                dealTool.setVisible(false);
+
+                dealsButton.click();
             }
         });
 
@@ -201,6 +269,10 @@ public class MainUI extends UI {
         requestContent.setVisible(false);
         requestTool.setVisible(false);
         vertLayout.addComponents(requestTool, requestContent);
+
+        dealContent.setVisible(false);
+        dealTool.setVisible(false);
+        vertLayout.addComponents(dealTool, dealContent);
 
         setContent(vertLayout);
     }
@@ -250,6 +322,22 @@ public class MainUI extends UI {
                     filtered.add(c);
             }
             requestGrid.setItems(filtered);
+        }
+    }
+
+    public void updateDeals(){
+        HashMap<Integer, Deal> deals = dealController.getAll();
+        String filter = dealfilterText.getValue();
+        if(filter.equals(""))
+            dealGrid.setItems(new ArrayList<>(deals.values()));
+        else {
+            ArrayList<Deal> filtered = new ArrayList<>();
+            for (Map.Entry<Integer, Deal> entry : deals.entrySet()) {
+                Deal c = entry.getValue();
+                if (c.getRealty().toString().startsWith(filter))
+                    filtered.add(c);
+            }
+            dealGrid.setItems(filtered);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.practice.office.requests;
+package com.practice.office.deals;
 
 import com.practice.office.MainUI;
 import com.practice.office.clients.Client;
@@ -14,13 +14,13 @@ import com.vaadin.ui.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class RequestForm extends FormLayout {
+public class DealForm extends FormLayout {
     private MainUI ui;
-    private RequestController controller;
-    private final Request EMPTY = new Request();
+    private DealController controller;
+    private final Deal EMPTY = new Deal();
 
-    private TextField purpose = new TextField("purpose");
-    private ComboBox<String> client = new ComboBox<>("client");
+    private ComboBox<String> seller = new ComboBox<>("seller");
+    private ComboBox<String> buyer = new ComboBox<>("buyer");
     private ComboBox<String> realty = new ComboBox<>("realty");
     private TextField dm = new TextField("dm");
 
@@ -28,10 +28,10 @@ public class RequestForm extends FormLayout {
     private Button update = new Button("Update");
     private Button delete = new Button("Delete");
 
-    private Binder<Request> binder = new Binder<>(Request.class);
+    private Binder<Deal> binder = new Binder<>(Deal.class);
 
-    public RequestForm(MainUI ui, ClientController clientController, RealtyController realtyController,
-                       RequestController controller){
+    public DealForm(MainUI ui, ClientController clientController, RealtyController realtyController,
+                       DealController controller){
         this.ui = ui;
         this.controller = controller;
 
@@ -46,63 +46,78 @@ public class RequestForm extends FormLayout {
 
         ArrayList<String> clientsList = new ArrayList<>();
         clientController.getAll().values().forEach(client -> clientsList.add(client.toString()));
-        client.setItems(clientsList);
+        seller.setItems(clientsList);
+        buyer.setItems(clientsList);
 
         ArrayList<String> realtiesList = new ArrayList<>();
         realtyController.getAll().values().forEach(realty -> realtiesList.add(realty.toString()));
         realty.setItems(realtiesList);
 
         this.addComponents(components);
-        binder.bind(purpose, sq -> sq.toString(), null);
         binder.bind(dm, dm -> new SimpleDateFormat("yyyy MM dd").format(dm), null);
 
-        binder.bind(client, new ValueProvider<Request, String>() {
+        binder.bind(seller, new ValueProvider<Deal, String>() {
             @Override
-            public String apply(Request request) {
-                return request.getClient().toString();
+            public String apply(Deal deal) {
+                return deal.getSeller().toString();
             }
 
-            }, new Setter<Request, String>() {
+        }, new Setter<Deal, String>() {
             @Override
-            public void accept(Request request, String s) {
+            public void accept(Deal deal, String s) {
                 int clientId = Integer.parseInt(s.split(". ")[0]);
                 Client client = (Client) clientController.getEntityById(clientId);
-                request.setClient(client);
+                deal.setSeller(client);
             }
         });
 
-        binder.bind(realty, new ValueProvider<Request, String>() {
+        binder.bind(buyer, new ValueProvider<Deal, String>() {
             @Override
-            public String apply(Request request) {
-                return request.getRealty().toString();
+            public String apply(Deal deal) {
+                return deal.getBuyer().toString();
             }
 
-        }, new Setter<Request, String>() {
+        }, new Setter<Deal, String>() {
             @Override
-            public void accept(Request request, String s) {
+            public void accept(Deal deal, String s) {
+                int clientId = Integer.parseInt(s.split(". ")[0]);
+                Client client = (Client) clientController.getEntityById(clientId);
+                deal.setBuyer(client);
+            }
+        });
+
+        binder.bind(realty, new ValueProvider<Deal, String>() {
+            @Override
+            public String apply(Deal deal) {
+                return deal.getRealty().toString();
+            }
+
+        }, new Setter<Deal, String>() {
+            @Override
+            public void accept(Deal deal, String s) {
                 int realtyId = Integer.parseInt(s.split(". ")[0]);
                 Realty realty = (Realty) realtyController.getEntityById(realtyId);
-                request.setRealty(realty);
+                deal.setRealty(realty);
             }
         });
 
         binder.bindInstanceFields(this);
     }
-    public void setRequest(Request request) {
-        binder.setBean(request);
-        if (request == null) {
+    public void setDeal(Deal deal) {
+        binder.setBean(deal);
+        if (deal == null) {
             setVisible(false);
         } else {
             add.setVisible(false);
             update.setVisible(true);
             delete.setVisible(true);
             setVisible(true);
-            client.focus();
+            seller.focus();
         }
     }
 
     public void addButton(){
-        setRequest(EMPTY);
+        setDeal(EMPTY);
         add.setVisible(true);
         update.setVisible(false);
         delete.setVisible(false);
@@ -110,27 +125,27 @@ public class RequestForm extends FormLayout {
     }
 
     public void add(){
-        Request request = binder.getBean();
+        Deal deal = binder.getBean();
         int id = IdGenerator.generateId();
-        request.setId(id);
-        controller.create(request);
+        deal.setId(id);
+        controller.create(deal);
 
-        ui.updateRequests();
-        setRequest(null);
+        ui.updateDeals();
+        setDeal(null);
     }
 
     public void update(){
-        Request request = binder.getBean();
-        controller.update(request);
+        Deal deal = binder.getBean();
+        controller.update(deal);
 
-        ui.updateRequests();
-        setRequest(null);
+        ui.updateDeals();
+        setDeal(null);
     }
     public void delete(){
-        Request request = binder.getBean();
-        controller.delete(request);
+        Deal deal = binder.getBean();
+        controller.delete(deal);
 
-        ui.updateRequests();
-        setRequest(null);
+        ui.updateDeals();
+        setDeal(null);
     }
 }
