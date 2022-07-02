@@ -20,4 +20,6 @@ public class Constants {
     public static String DELETE_FROM_SQL = "DELETE FROM :table WHERE id = ?;";
     public static String TABLE = ":table";
     public static String QUESTION = "?";
+
+    public static String TIMESTAMP_PATTERN = "yyyy MM dd";
 }

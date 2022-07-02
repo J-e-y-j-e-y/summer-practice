@@ -52,9 +52,9 @@ public class RequestForm extends FormLayout {
         realtyController.getAll().values().forEach(realty -> realtiesList.add(realty.toString()));
         realty.setItems(realtiesList);
 
-        this.addComponents(components);
-        binder.bind(purpose, sq -> sq.toString(), null);
-        binder.bind(dm, dm -> new SimpleDateFormat("yyyy MM dd").format(dm), null);
+        this.addComponents(purpose, client, realty, dm, components);
+        binder.bind(purpose, Request::getStrPurpose, Request::setStrPurpose);
+        binder.bind(dm, Request::getStrDm, Request::setStrDm);
 
         binder.bind(client, new ValueProvider<Request, String>() {
             @Override
