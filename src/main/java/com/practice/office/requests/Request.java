@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 
 import static com.practice.office.utils.Constants.TIMESTAMP_PATTERN;
 
@@ -18,7 +19,7 @@ import static com.practice.office.utils.Constants.TIMESTAMP_PATTERN;
 @Getter
 @Setter
 public class Request {
-    private int id;
+    private UUID id;
     private Purpose purpose;
     private Client client;
     private Realty realty;

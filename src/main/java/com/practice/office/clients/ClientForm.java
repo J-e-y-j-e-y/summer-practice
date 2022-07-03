@@ -10,6 +10,8 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 
+import java.util.UUID;
+
 public class ClientForm extends FormLayout {
     private MainUI ui;
     private ClientController controller;
@@ -68,7 +70,7 @@ public class ClientForm extends FormLayout {
 
     public void add(){
         Client Client = binder.getBean();
-        int id = IdGenerator.generateId();
+        UUID id = IdGenerator.generateId();
         Client.setId(id);
         controller.create(Client);
 

@@ -11,24 +11,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static com.practice.office.utils.Constants.*;
 
 public class RealtyController extends AbstractController {
     @Getter
-    private static HashMap<Integer, Realty> realties = new HashMap<>();
+    private static HashMap<UUID, Realty> realties = new HashMap<>();
     private final String tableName = "realties";
 
     @SneakyThrows
     @Override
-    public HashMap<Integer, Realty> getAll() {
+    public HashMap<UUID, Realty> getAll() {
         String query = FileUtils.readFileToString(FileUtils.getFile(SELECT_SQL_QUERY_PATH), Charset.defaultCharset());
         query = query.replace(QUESTION, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
+                UUID id = UUID.fromString(rs.getString(1));
                 String neighbourhood = rs.getString(2);
                 String address = rs.getString(3);
                 double square = rs.getDouble(4);
@@ -49,7 +50,7 @@ public class RealtyController extends AbstractController {
     @Override
     public Object update(Object entity) {
         Realty updatedRealty = (Realty) entity;
-        int realtyId = updatedRealty.getId();
+        UUID realtyId = updatedRealty.getId();
 
         Realty realty = realties.get(realtyId);
         realty.setNeighbourhood(updatedRealty.getNeighbourhood());
@@ -69,7 +70,7 @@ public class RealtyController extends AbstractController {
             ps.setInt(4, realty.getRoomNumber());
             ps.setDouble(5, realty.getPrice());
             ps.setString(6, realty.getCadastralNumber());
-            ps.setInt(7, realtyId);
+            ps.setString(7, realtyId.toString());
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -84,7 +85,7 @@ public class RealtyController extends AbstractController {
 
     @Override
     public Realty getEntityById(Object id) {
-        int realtyId = (int) id;
+        UUID realtyId = (UUID) id;
         return realties.get(realtyId);
     }
 
@@ -92,7 +93,7 @@ public class RealtyController extends AbstractController {
     public boolean delete(Object id) {
         Realty realty = (Realty) id;
 
-        int realtyId = realty.getId();
+        UUID realtyId = realty.getId();
         realties.remove(realtyId);
         int rows = 0;
 
@@ -100,7 +101,7 @@ public class RealtyController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setInt(1, realtyId);
+            ps.setString(1, realtyId.toString());
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,7 +120,7 @@ public class RealtyController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setInt(1, realty.getId());
+            ps.setString(1, realty.getId().toString());
             ps.setString(2, realty.getNeighbourhood());
             ps.setString(3, realty.getAddress());
             ps.setDouble(4, realty.getSquare());

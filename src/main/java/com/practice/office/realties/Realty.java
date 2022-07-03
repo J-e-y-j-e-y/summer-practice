@@ -2,13 +2,15 @@ package com.practice.office.realties;
 
 import lombok.*;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 public class Realty {
-    private int id;
+    private UUID id;
     private String neighbourhood;
     private String address;
     private double square;

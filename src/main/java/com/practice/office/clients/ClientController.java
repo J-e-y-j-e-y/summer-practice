@@ -10,17 +10,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static com.practice.office.utils.Constants.*;
 
 public class ClientController extends AbstractController {
     @Getter
-    private static HashMap<Integer, Client> clients = new HashMap<>();
+    private static HashMap<UUID, Client> clients = new HashMap<>();
     private final String tableName = "clients";
 
     @SneakyThrows
     @Override
-    public HashMap<Integer, Client> getAll() {
+    public HashMap<UUID, Client> getAll() {
         String query = FileUtils.readFileToString(FileUtils.getFile(SELECT_SQL_QUERY_PATH), Charset.defaultCharset());
         query = query.replace(QUESTION, tableName);
         System.out.println(query);
@@ -29,7 +30,7 @@ public class ClientController extends AbstractController {
         try {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
+                UUID id = UUID.fromString(rs.getString(1));
                 String name = rs.getString(2);
                 String surname = rs.getString(3);
                 String fathername = rs.getString(4);
@@ -49,7 +50,7 @@ public class ClientController extends AbstractController {
     @Override
     public Object update(Object entity) {
         Client updatedClient = (Client) entity;
-        int client_id = updatedClient.getId();
+        UUID client_id = updatedClient.getId();
 
         Client client = clients.get(client_id);
         client.setName(updatedClient.getName());
@@ -67,7 +68,7 @@ public class ClientController extends AbstractController {
             ps.setString(3, client.getFathername());
             ps.setString(4, client.getPhone());
             ps.setString(5, client.getEmail());
-            ps.setInt(6, client.getId());
+            ps.setString(6, client.getId().toString());
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -82,7 +83,7 @@ public class ClientController extends AbstractController {
 
     @Override
     public Client getEntityById(Object id) {
-        int clientId = (int) id;
+        UUID clientId = (UUID) id;
         return clients.get(clientId);
     }
 
@@ -91,7 +92,7 @@ public class ClientController extends AbstractController {
         Client client = (Client) id;
         // delete client
 
-        int client_id = client.getId();
+        UUID client_id = client.getId();
         clients.remove(client_id);
         int rows = 0;
 
@@ -99,7 +100,7 @@ public class ClientController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setInt(1, client.getId());
+            ps.setString(1, client.getId().toString());
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,7 +119,7 @@ public class ClientController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setInt(1, client.getId());
+            ps.setString(1, client.getId().toString());
             ps.setString(2, client.getName());
             ps.setString(3, client.getSurname());
             ps.setString(4, client.getFathername());

@@ -10,6 +10,8 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 
+import java.util.UUID;
+
 public class RealtyForm extends FormLayout {
     private MainUI ui;
     private RealtyController controller;
@@ -71,7 +73,7 @@ public class RealtyForm extends FormLayout {
 
     public void add(){
         Realty Realty = binder.getBean();
-        int id = IdGenerator.generateId();
+        UUID id = IdGenerator.generateId();
         Realty.setId(id);
         controller.create(Realty);
 

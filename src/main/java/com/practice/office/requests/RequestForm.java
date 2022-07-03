@@ -13,6 +13,7 @@ import com.vaadin.ui.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class RequestForm extends FormLayout {
     private MainUI ui;
@@ -111,7 +112,7 @@ public class RequestForm extends FormLayout {
 
     public void add(){
         Request request = binder.getBean();
-        int id = IdGenerator.generateId();
+        UUID id = IdGenerator.generateId();
         request.setId(id);
         controller.create(request);
 

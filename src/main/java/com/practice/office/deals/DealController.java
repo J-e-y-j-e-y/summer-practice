@@ -18,12 +18,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static com.practice.office.utils.Constants.*;
 
 public class DealController extends AbstractController {
     @Getter
-    private static HashMap<Integer, Deal> deals = new HashMap<>();
+    private static HashMap<UUID, Deal> deals = new HashMap<>();
     private final String tableName = "deals";
     private ClientController clientController = null;
     private RealtyController realtyController = null;
@@ -35,19 +36,19 @@ public class DealController extends AbstractController {
 
     @SneakyThrows
     @Override
-    public HashMap<Integer, Deal> getAll() {
+    public HashMap<UUID, Deal> getAll() {
         String query = FileUtils.readFileToString(FileUtils.getFile(SELECT_SQL_QUERY_PATH), Charset.defaultCharset());
         query = query.replace("?", tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
-                int sellerId =  rs.getInt(2);
+                UUID id = UUID.fromString(rs.getString(1));
+                UUID sellerId =  UUID.fromString(rs.getString(2));
                 Client seller = clientController.getEntityById(sellerId);
-                int buyerId =  rs.getInt(3);
+                UUID buyerId =  UUID.fromString(rs.getString(3));
                 Client buyer = clientController.getEntityById(buyerId);
-                int realtyId = rs.getInt(4);
+                UUID realtyId = UUID.fromString(rs.getString(4));
                 Realty realty = realtyController.getEntityById(realtyId);
                 Timestamp dm = rs.getTimestamp(5);
                 Deal deal = new Deal(id, seller, buyer, realty, dm);
@@ -64,7 +65,7 @@ public class DealController extends AbstractController {
     @Override
     public Object update(Object entity) {
         Deal updatedDeal = (Deal) entity;
-        int dealId = updatedDeal.getId();
+        UUID dealId = updatedDeal.getId();
 
         Deal deal = deals.get(dealId);
         deal.setSeller(updatedDeal.getSeller());
@@ -76,11 +77,11 @@ public class DealController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setInt(1, deal.getSeller().getId());
-            ps.setInt(2, deal.getBuyer().getId());
-            ps.setInt(3, deal.getRealty().getId());
+            ps.setString(1, deal.getSeller().getId().toString());
+            ps.setString(2, deal.getBuyer().getId().toString());
+            ps.setString(3, deal.getRealty().getId().toString());
             ps.setTimestamp(4, deal.getDm());
-            ps.setInt(5, dealId);
+            ps.setString(5, dealId.toString());
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -95,7 +96,7 @@ public class DealController extends AbstractController {
 
     @Override
     public Deal getEntityById(Object id) {
-        int dealId = (int) id;
+        UUID dealId = (UUID) id;
         return deals.get(dealId);
     }
 
@@ -103,7 +104,7 @@ public class DealController extends AbstractController {
     public boolean delete(Object id) {
         Deal deal = (Deal) id;
 
-        int dealId = deal.getId();
+        UUID dealId = deal.getId();
         deals.remove(dealId);
         int rows = 0;
 
@@ -111,7 +112,7 @@ public class DealController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setInt(1, dealId);
+            ps.setString(1, dealId.toString());
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -130,10 +131,10 @@ public class DealController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setInt(1, deal.getId());
-            ps.setInt(2, deal.getSeller().getId());
-            ps.setInt(3, deal.getBuyer().getId());
-            ps.setInt(4, deal.getRealty().getId());
+            ps.setString(1, deal.getId().toString());
+            ps.setString(2, deal.getSeller().getId().toString());
+            ps.setString(3, deal.getBuyer().getId().toString());
+            ps.setString(4, deal.getRealty().getId().toString());
             ps.setTimestamp(5, deal.getDm());
 
             rows = ps.executeUpdate();

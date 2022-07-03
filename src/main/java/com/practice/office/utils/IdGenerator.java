@@ -1,7 +1,9 @@
 package com.practice.office.utils;
 
+import java.util.UUID;
+
 public class IdGenerator {
-    public static int generateId(){
-        return 1;
+    public static UUID generateId(){
+        return UUID.randomUUID();
     }
 }

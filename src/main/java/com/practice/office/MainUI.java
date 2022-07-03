@@ -21,6 +21,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Theme(ValoTheme.THEME_NAME)
 public class MainUI extends UI {
@@ -253,8 +254,8 @@ public class MainUI extends UI {
             }
         });
 
-        vertLayout.setWidthUndefined(); // Default, can be omitted
-        vertLayout.setSpacing(false); // Compact layout
+        vertLayout.setWidthFull(); // Default, can be omitted
+        vertLayout.setSpacing(true); // Compact layout
         vertLayout.addComponent(bar);
 
 
@@ -274,33 +275,35 @@ public class MainUI extends UI {
         dealTool.setVisible(false);
         vertLayout.addComponents(dealTool, dealContent);
 
+        setSizeFull();
         setContent(vertLayout);
     }
 
     public void updateClients() {
-        HashMap<Integer, Client> clients = clientController.getAll();
+        HashMap<UUID, Client> clients = clientController.getAll();
         String filter = clientfilterText.getValue();
         if(filter.equals(""))
             clientsGrid.setItems(new ArrayList<>(clients.values()));
         else {
             ArrayList<Client> filtered = new ArrayList<>();
-            for (Map.Entry<Integer, Client> entry : clients.entrySet()) {
+            for (Map.Entry<UUID, Client> entry : clients.entrySet()) {
                 Client c = entry.getValue();
                 if (c.getName().startsWith(filter))
                     filtered.add(c);
             }
             clientsGrid.setItems(filtered);
         }
+        clientsGrid.getColumns().forEach(col -> {col.setResizable(true); col.setMinimumWidthFromContent(true);});
     }
 
     public void updateRealties(){
-        HashMap<Integer, Realty> realties = realtyController.getAll();
+        HashMap<UUID, Realty> realties = realtyController.getAll();
         String filter = realtyfilterText.getValue();
         if(filter.equals(""))
             realtiesGrid.setItems(new ArrayList<>(realties.values()));
         else {
             ArrayList<Realty> filtered = new ArrayList<>();
-            for (Map.Entry<Integer, Realty> entry : realties.entrySet()) {
+            for (Map.Entry<UUID, Realty> entry : realties.entrySet()) {
                 Realty c = entry.getValue();
                 if (c.getNeighbourhood().startsWith(filter))
                     filtered.add(c);
@@ -310,13 +313,13 @@ public class MainUI extends UI {
     }
 
     public void updateRequests(){
-        HashMap<Integer, Request> requests = requestController.getAll();
+        HashMap<UUID, Request> requests = requestController.getAll();
         String filter = requestfilterText.getValue();
         if(filter.equals(""))
             requestGrid.setItems(new ArrayList<>(requests.values()));
         else {
             ArrayList<Request> filtered = new ArrayList<>();
-            for (Map.Entry<Integer, Request> entry : requests.entrySet()) {
+            for (Map.Entry<UUID, Request> entry : requests.entrySet()) {
                 Request c = entry.getValue();
                 if (c.getPurpose().toString().startsWith(filter))
                     filtered.add(c);
@@ -326,13 +329,13 @@ public class MainUI extends UI {
     }
 
     public void updateDeals(){
-        HashMap<Integer, Deal> deals = dealController.getAll();
+        HashMap<UUID, Deal> deals = dealController.getAll();
         String filter = dealfilterText.getValue();
         if(filter.equals(""))
             dealGrid.setItems(new ArrayList<>(deals.values()));
         else {
             ArrayList<Deal> filtered = new ArrayList<>();
-            for (Map.Entry<Integer, Deal> entry : deals.entrySet()) {
+            for (Map.Entry<UUID, Deal> entry : deals.entrySet()) {
                 Deal c = entry.getValue();
                 if (c.getRealty().toString().startsWith(filter))
                     filtered.add(c);

@@ -13,6 +13,7 @@ import com.vaadin.ui.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class DealForm extends FormLayout {
     private MainUI ui;
@@ -126,7 +127,7 @@ public class DealForm extends FormLayout {
 
     public void add(){
         Deal deal = binder.getBean();
-        int id = IdGenerator.generateId();
+        UUID id = IdGenerator.generateId();
         deal.setId(id);
         controller.create(deal);
 

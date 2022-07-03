@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static com.practice.office.utils.Constants.DELETE_FROM_SQL;
 import static com.practice.office.utils.Constants.INSERT_INTO_REQUESTS_SQL;
@@ -27,7 +28,7 @@ import static com.practice.office.utils.Constants.UPDATE_REQUESTS_SQL;
 
 public class RequestController extends AbstractController {
     @Getter
-    private static HashMap<Integer, Request> requests = new HashMap<>();
+    private static HashMap<UUID, Request> requests = new HashMap<>();
     private final String tableName = "requests";
     private ClientController clientController = null;
     private RealtyController realtyController = null;
@@ -39,18 +40,18 @@ public class RequestController extends AbstractController {
 
     @SneakyThrows
     @Override
-    public HashMap<Integer, Request> getAll() {
+    public HashMap<UUID, Request> getAll() {
         String query = FileUtils.readFileToString(FileUtils.getFile(SELECT_SQL_QUERY_PATH), Charset.defaultCharset());
         query = query.replace(QUESTION, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt(1);
+                UUID id = UUID.fromString(rs.getString(1));
                 Purpose purpose = Purpose.valueOf(rs.getString(2));
-                int clientId =  rs.getInt(3);
+                UUID clientId =  UUID.fromString(rs.getString(3));
                 Client client = clientController.getEntityById(clientId);
-                int realtyId = rs.getInt(4);
+                UUID realtyId = UUID.fromString(rs.getString(4));
                 Realty realty = realtyController.getEntityById(realtyId);
                 Timestamp dm = rs.getTimestamp(5);
                 Request request = new Request(id, purpose, client, realty, dm);
@@ -67,7 +68,7 @@ public class RequestController extends AbstractController {
     @Override
     public Object update(Object entity) {
         Request updatedRequest = (Request) entity;
-        int requestId = updatedRequest.getId();
+        UUID requestId = updatedRequest.getId();
 
         Request request = requests.get(requestId);
         request.setPurpose(updatedRequest.getPurpose());
@@ -80,10 +81,10 @@ public class RequestController extends AbstractController {
         int rows = 0;
         try {
             ps.setString(1, request.getPurpose().name());
-            ps.setInt(2, request.getClient().getId());
-            ps.setInt(3, request.getRealty().getId());
+            ps.setString(2, request.getClient().getId().toString());
+            ps.setString(3, request.getRealty().getId().toString());
             ps.setTimestamp(4, request.getDm());
-            ps.setInt(5, requestId);
+            ps.setString(5, requestId.toString());
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -98,7 +99,7 @@ public class RequestController extends AbstractController {
 
     @Override
     public Request getEntityById(Object id) {
-        int requestId = (int) id;
+        UUID requestId = (UUID) id;
         return requests.get(requestId);
     }
 
@@ -106,7 +107,7 @@ public class RequestController extends AbstractController {
     public boolean delete(Object id) {
         Request request = (Request) id;
 
-        int requestId = request.getId();
+        UUID requestId = request.getId();
         requests.remove(requestId);
         int rows = 0;
 
@@ -114,7 +115,7 @@ public class RequestController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setInt(1, requestId);
+            ps.setString(1, requestId.toString());
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,10 +134,10 @@ public class RequestController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setInt(1, request.getId());
+            ps.setString(1, request.getId().toString());
             ps.setString(2, request.getPurpose().name());
-            ps.setInt(3, request.getClient().getId());
-            ps.setInt(4, request.getRealty().getId());
+            ps.setString(3, request.getClient().getId().toString());
+            ps.setString(4, request.getRealty().getId().toString());
             ps.setTimestamp(5, request.getDm());
 
             rows = ps.executeUpdate();

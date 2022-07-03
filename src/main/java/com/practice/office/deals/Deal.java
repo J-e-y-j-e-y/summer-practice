@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 
 import static com.practice.office.utils.Constants.TIMESTAMP_PATTERN;
 
@@ -17,7 +18,7 @@ import static com.practice.office.utils.Constants.TIMESTAMP_PATTERN;
 @Getter
 @Setter
 public class Deal {
-    private int id;
+    private UUID id;
     private Client seller;
     private Client buyer;
     private Realty realty;
