@@ -6,6 +6,7 @@ import com.practice.office.clients.ClientController;
 import com.practice.office.realties.Realty;
 import com.practice.office.realties.RealtyController;
 import com.practice.office.utils.IdGenerator;
+import com.practice.office.utils.Purpose;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.Setter;
@@ -13,6 +14,7 @@ import com.vaadin.ui.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class RequestForm extends FormLayout {
@@ -20,7 +22,7 @@ public class RequestForm extends FormLayout {
     private RequestController controller;
     private final Request EMPTY = new Request();
 
-    private TextField purpose = new TextField("purpose");
+    private ComboBox<String> purpose = new ComboBox<>("purpose");
     private ComboBox<String> client = new ComboBox<>("client");
     private ComboBox<String> realty = new ComboBox<>("realty");
     private TextField dm = new TextField("dm");
@@ -52,6 +54,10 @@ public class RequestForm extends FormLayout {
         ArrayList<String> realtiesList = new ArrayList<>();
         realtyController.getAll().values().forEach(realty -> realtiesList.add(realty.toString()));
         realty.setItems(realtiesList);
+
+        ArrayList<String> purposes = new ArrayList<>();
+        Arrays.stream(Purpose.values()).forEach(purpose -> purposes.add(purpose.name()));
+        purpose.setItems(purposes);
 
         this.addComponents(purpose, client, realty, dm, components);
         binder.bind(purpose, Request::getStrPurpose, Request::setStrPurpose);
