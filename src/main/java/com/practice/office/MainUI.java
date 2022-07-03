@@ -89,6 +89,7 @@ public class MainUI extends UI {
 
         clientsGrid.asSingleSelect().addValueChangeListener(event ->
                 clientForm.setClient(clientsGrid.asSingleSelect().getValue()));
+
         realtiesGrid.asSingleSelect().addValueChangeListener(event ->
                 realtyForm.setRealty(realtiesGrid.asSingleSelect().getValue()));
         requestGrid.asSingleSelect().addValueChangeListener(event ->

@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static com.practice.office.utils.Constants.DASH;
+
 public class DealForm extends FormLayout {
     private MainUI ui;
     private DealController controller;
@@ -60,7 +62,8 @@ public class DealForm extends FormLayout {
         binder.bind(seller, new ValueProvider<Deal, String>() {
             @Override
             public String apply(Deal deal) {
-                return deal.getSeller().toString();
+                Client seller = deal.getSeller();
+                return seller != null ? seller.toString() : DASH;
             }
 
         }, new Setter<Deal, String>() {
@@ -75,7 +78,8 @@ public class DealForm extends FormLayout {
         binder.bind(buyer, new ValueProvider<Deal, String>() {
             @Override
             public String apply(Deal deal) {
-                return deal.getBuyer().toString();
+                Client buyer = deal.getBuyer();
+                return buyer != null ? buyer.toString() : DASH;
             }
 
         }, new Setter<Deal, String>() {
@@ -90,7 +94,8 @@ public class DealForm extends FormLayout {
         binder.bind(realty, new ValueProvider<Deal, String>() {
             @Override
             public String apply(Deal deal) {
-                return deal.getRealty().toString();
+                Realty realty = deal.getRealty();
+                return realty != null ? realty.toString() : DASH;
             }
 
         }, new Setter<Deal, String>() {

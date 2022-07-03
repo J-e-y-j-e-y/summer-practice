@@ -3,13 +3,13 @@ package com.practice.office.requests;
 import com.practice.office.clients.Client;
 import com.practice.office.realties.Realty;
 import com.practice.office.utils.Purpose;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.vaadin.ui.DateField;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 import static com.practice.office.utils.Constants.TIMESTAMP_PATTERN;
@@ -20,10 +20,10 @@ import static com.practice.office.utils.Constants.TIMESTAMP_PATTERN;
 @Setter
 public class Request {
     private UUID id;
-    private Purpose purpose;
+    private Purpose purpose = Purpose.BUY;
     private Client client;
     private Realty realty;
-    private Timestamp dm;
+    private Timestamp dm = Timestamp.valueOf(LocalDateTime.now());
     private static SimpleDateFormat format = new SimpleDateFormat(TIMESTAMP_PATTERN);
 
     public String getStrPurpose() {

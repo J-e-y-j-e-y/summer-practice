@@ -35,16 +35,17 @@ public class ClientForm extends FormLayout {
         this.ui = ui;
         this.controller = controller;
 
-        add.addClickListener(e -> add());
-        add.setVisible(false);
-        update.addClickListener(e -> update());
-        delete.addClickListener(e -> delete());
-        HorizontalLayout components = new HorizontalLayout();
-        components.addComponent((Component) add);
-        components.addComponent((Component) update);
-        components.addComponent((Component) delete);
-
-        this.addComponents(name, surname, fathername,  phone, email, components);
+        if(controller != null) {
+            add.addClickListener(e -> add());
+            add.setVisible(false);
+            update.addClickListener(e -> update());
+            delete.addClickListener(e -> delete());
+            HorizontalLayout components = new HorizontalLayout();
+            components.addComponent((Component) add);
+            components.addComponent((Component) update);
+            components.addComponent((Component) delete);
+            this.addComponents(name, surname, fathername,  phone, email, components);
+        }else this.addComponents(name, surname, fathername,  phone, email);
         binder.bindInstanceFields(this);
     }
     public void setClient(Client Client) {

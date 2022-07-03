@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.practice.office.utils.Constants.TIMESTAMP_PATTERN;
@@ -22,7 +23,7 @@ public class Deal {
     private Client seller;
     private Client buyer;
     private Realty realty;
-    private Timestamp dm;
+    private Timestamp dm = Timestamp.valueOf(LocalDateTime.now());
     private static SimpleDateFormat format = new SimpleDateFormat(TIMESTAMP_PATTERN);
 
 

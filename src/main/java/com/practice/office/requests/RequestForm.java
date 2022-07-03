@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static com.practice.office.utils.Constants.DASH;
+
 public class RequestForm extends FormLayout {
     private MainUI ui;
     private RequestController controller;
@@ -66,7 +68,8 @@ public class RequestForm extends FormLayout {
         binder.bind(client, new ValueProvider<Request, String>() {
             @Override
             public String apply(Request request) {
-                return request.getClient().toString();
+                Client client = request.getClient();
+                return client != null ? client.toString() : DASH;
             }
 
             }, new Setter<Request, String>() {
@@ -81,7 +84,8 @@ public class RequestForm extends FormLayout {
         binder.bind(realty, new ValueProvider<Request, String>() {
             @Override
             public String apply(Request request) {
-                return request.getRealty().toString();
+                Realty realty = request.getRealty();
+                return realty != null ? realty.toString() : DASH;
             }
 
         }, new Setter<Request, String>() {
