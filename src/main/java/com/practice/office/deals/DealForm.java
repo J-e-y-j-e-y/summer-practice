@@ -3,11 +3,15 @@ package com.practice.office.deals;
 import com.practice.office.MainUI;
 import com.practice.office.clients.Client;
 import com.practice.office.clients.ClientController;
+import com.practice.office.clients.ClientForm;
 import com.practice.office.realties.Realty;
 import com.practice.office.realties.RealtyController;
+import com.practice.office.realties.RealtyForm;
 import com.practice.office.utils.IdGenerator;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValueProvider;
+import com.vaadin.event.selection.SingleSelectionEvent;
+import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.Setter;
 import com.vaadin.ui.*;
 
@@ -23,8 +27,23 @@ public class DealForm extends FormLayout {
     private final Deal EMPTY = new Deal();
 
     private ComboBox<String> seller = new ComboBox<>("seller");
+
+    private Label showSeller = new Label("Seller Info");
+    private ClientForm showSellerForm = new ClientForm(ui, null);
+    VerticalLayout showSellerLayout = new VerticalLayout(showSeller, showSellerForm);
+
     private ComboBox<String> buyer = new ComboBox<>("buyer");
+
+    private Label showBuyer = new Label("Buyer Info");
+    private ClientForm showBuyerForm = new ClientForm(ui, null);
+    VerticalLayout showBuyerLayout = new VerticalLayout(showBuyer, showBuyerForm);
+
     private ComboBox<String> realty = new ComboBox<>("realty");
+
+    private Label showRealty = new Label("Realty Info");
+    private RealtyForm showRealtyForm = new RealtyForm(ui, null);
+    VerticalLayout showRealtyLayout = new VerticalLayout(showRealty, showRealtyForm);
+
     private TextField dm = new TextField("dm");
 
     private Button add = new Button("Add");
@@ -56,7 +75,54 @@ public class DealForm extends FormLayout {
         realtyController.getAll().values().forEach(realty -> realtiesList.add(realty.toString()));
         realty.setItems(realtiesList);
 
-        this.addComponents(seller, buyer, realty, dm, components);
+        FormLayout formLayout = new FormLayout();
+        formLayout.addComponents(seller, buyer, realty, dm, components);
+        VerticalLayout showClientLayout = new VerticalLayout(showSellerLayout, showBuyerLayout);
+        HorizontalLayout main = new HorizontalLayout(formLayout, showClientLayout, showRealtyLayout);
+        this.addComponents(main);
+
+        seller.addSelectionListener(new SingleSelectionListener<String>() {
+            @Override
+            public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
+                String id = singleSelectionEvent.getSelectedItem().get();
+                System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
+                System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
+                System.out.println("id = " + id);
+                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                System.out.println("id = " + id);
+                UUID clientId = UUID.fromString(id);
+                showSellerForm.setClient(clientController.getEntityById(clientId));
+            }
+        });
+
+        buyer.addSelectionListener(new SingleSelectionListener<String>() {
+            @Override
+            public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
+                String id = singleSelectionEvent.getSelectedItem().get();
+                System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
+                System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
+                System.out.println("id = " + id);
+                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                System.out.println("id = " + id);
+                UUID clientId = UUID.fromString(id);
+                showBuyerForm.setClient(clientController.getEntityById(clientId));
+            }
+        });
+
+        realty.addSelectionListener(new SingleSelectionListener<String>() {
+            @Override
+            public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
+                String id = singleSelectionEvent.getSelectedItem().get();
+                System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
+                System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
+                System.out.println("id = " + id);
+                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                System.out.println("id = " + id);
+                UUID realtyId = UUID.fromString(id);
+                showRealtyForm.setRealty(realtyController.getEntityById(realtyId));
+            }
+        });
+
         binder.bind(dm, Deal::getStrDm, Deal::setStrDm);
 
         binder.bind(seller, new ValueProvider<Deal, String>() {

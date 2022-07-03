@@ -9,10 +9,12 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
+import lombok.Getter;
 
 import java.util.UUID;
 
 public class ClientForm extends FormLayout {
+    @Getter
     private MainUI ui;
     private ClientController controller;
     private final Client EMPTY = new Client();

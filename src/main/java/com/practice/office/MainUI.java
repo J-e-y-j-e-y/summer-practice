@@ -13,6 +13,7 @@ import com.practice.office.requests.Request;
 import com.practice.office.requests.RequestController;
 import com.practice.office.requests.RequestForm;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.ValueProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
@@ -89,11 +90,15 @@ public class MainUI extends UI {
 
         clientsGrid.asSingleSelect().addValueChangeListener(event ->
                 clientForm.setClient(clientsGrid.asSingleSelect().getValue()));
-
         realtiesGrid.asSingleSelect().addValueChangeListener(event ->
                 realtyForm.setRealty(realtiesGrid.asSingleSelect().getValue()));
+
         requestGrid.asSingleSelect().addValueChangeListener(event ->
-                requestForm.setRequest(requestGrid.asSingleSelect().getValue()));
+            {
+                Request req = requestGrid.asSingleSelect().getValue();
+                requestForm.setRequest(req);
+                //showClientForm.setClient(req.getClient());
+            });
         dealGrid.asSingleSelect().addValueChangeListener(event ->
                 dealForm.setDeal(dealGrid.asSingleSelect().getValue()));
 
@@ -136,12 +141,14 @@ public class MainUI extends UI {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 requestForm.setRequest(null);
-                requestGrid.setColumns("purpose", "client", "realty", "dm");
+                requestGrid.setColumns("purpose", "dm");
+
                 updateRequests();
                 requestfilterText.setPlaceholder("Filter by purpose...");
                 requestfilterText.setValueChangeMode(ValueChangeMode.EAGER);
                 requestfilterText.addValueChangeListener(e -> updateClients());
 
+                //showClientForm.setClient(null);
                 requestContent.setVisible(true);
                 requestTool.setVisible(true);
             }

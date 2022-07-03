@@ -3,14 +3,19 @@ package com.practice.office.requests;
 import com.practice.office.MainUI;
 import com.practice.office.clients.Client;
 import com.practice.office.clients.ClientController;
+import com.practice.office.clients.ClientForm;
 import com.practice.office.realties.Realty;
 import com.practice.office.realties.RealtyController;
+import com.practice.office.realties.RealtyForm;
 import com.practice.office.utils.IdGenerator;
 import com.practice.office.utils.Purpose;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValueProvider;
+import com.vaadin.event.selection.SingleSelectionEvent;
+import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.Setter;
 import com.vaadin.ui.*;
+import lombok.Getter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,8 +30,19 @@ public class RequestForm extends FormLayout {
     private final Request EMPTY = new Request();
 
     private ComboBox<String> purpose = new ComboBox<>("purpose");
+
     private ComboBox<String> client = new ComboBox<>("client");
+
+    private Label showClient = new Label("Client Info");
+    private ClientForm showClientForm = new ClientForm(ui, null);
+    VerticalLayout showClientLayout = new VerticalLayout(showClient, showClientForm);
+
     private ComboBox<String> realty = new ComboBox<>("realty");
+
+    private Label showRealty = new Label("Realty Info");
+    private RealtyForm showRealtyForm = new RealtyForm(ui, null);
+    VerticalLayout showRealtyLayout = new VerticalLayout(showRealty, showRealtyForm);
+
     private TextField dm = new TextField("dm");
 
     private Button add = new Button("Add");
@@ -61,9 +77,41 @@ public class RequestForm extends FormLayout {
         Arrays.stream(Purpose.values()).forEach(purpose -> purposes.add(purpose.name()));
         purpose.setItems(purposes);
 
-        this.addComponents(purpose, client, realty, dm, components);
+        FormLayout formLayout = new FormLayout();
+        formLayout.addComponents(purpose, client, realty, dm, components);
+        HorizontalLayout main = new HorizontalLayout(formLayout, showClientLayout, showRealtyLayout);
+        this.addComponents(main);
+
         binder.bind(purpose, Request::getStrPurpose, Request::setStrPurpose);
         binder.bind(dm, Request::getStrDm, Request::setStrDm);
+
+        client.addSelectionListener(new SingleSelectionListener<String>() {
+            @Override
+            public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
+                String id = singleSelectionEvent.getSelectedItem().get();
+                System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
+                System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
+                System.out.println("id = " + id);
+                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                System.out.println("id = " + id);
+                UUID clientId = UUID.fromString(id);
+                showClientForm.setClient(clientController.getEntityById(clientId));
+            }
+        });
+
+        realty.addSelectionListener(new SingleSelectionListener<String>() {
+            @Override
+            public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
+                String id = singleSelectionEvent.getSelectedItem().get();
+                System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
+                System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
+                System.out.println("id = " + id);
+                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                System.out.println("id = " + id);
+                UUID realtyId = UUID.fromString(id);
+                showRealtyForm.setRealty(realtyController.getEntityById(realtyId));
+            }
+        });
 
         binder.bind(client, new ValueProvider<Request, String>() {
             @Override
@@ -114,6 +162,8 @@ public class RequestForm extends FormLayout {
 
     public void addButton(){
         setRequest(EMPTY);
+        showClientForm.setClient(null);
+        showRealtyForm.setRealty(null);
         add.setVisible(true);
         update.setVisible(false);
         delete.setVisible(false);

@@ -9,10 +9,12 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
+import lombok.Getter;
 
 import java.util.UUID;
 
 public class RealtyForm extends FormLayout {
+    @Getter
     private MainUI ui;
     private RealtyController controller;
     private final Realty EMPTY = new Realty();
@@ -34,20 +36,21 @@ public class RealtyForm extends FormLayout {
         this.ui = ui;
         this.controller = controller;
 
-        add.addClickListener(e -> add());
-        add.setVisible(false);
-        update.addClickListener(e -> update());
-        delete.addClickListener(e -> delete());
-        HorizontalLayout components = new HorizontalLayout();
-        components.addComponent((Component) add);
-        components.addComponent((Component) update);
-        components.addComponent((Component) delete);
+        if(controller != null) {
+            add.addClickListener(e -> add());
+            add.setVisible(false);
+            update.addClickListener(e -> update());
+            delete.addClickListener(e -> delete());
+            HorizontalLayout components = new HorizontalLayout();
+            components.addComponent((Component) add);
+            components.addComponent((Component) update);
+            components.addComponent((Component) delete);
 
-
+            this.addComponents(neighbourhood, address, square, roomNumber, price, cadastralNumber, components);
+        }else this.addComponents(neighbourhood, address, square, roomNumber, price, cadastralNumber);
         binder.bind(square, Realty::getStrSquare, Realty::setStrSquare);
         binder.bind(roomNumber, Realty::getStrRoomNumber, Realty::setStrRoomNumber);
         binder.bind(price, Realty::getStrPrice, Realty::setStrPrice);
-        this.addComponents(neighbourhood, address,  square, roomNumber, price, cadastralNumber, components);
         binder.bindInstanceFields(this);
     }
     public void setRealty(Realty realty) {
