@@ -77,11 +77,11 @@ public class DealController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setString(1, deal.getSeller().getId().toString());
-            ps.setString(2, deal.getBuyer().getId().toString());
-            ps.setString(3, deal.getRealty().getId().toString());
+            ps.setObject(1, deal.getSeller().getId());
+            ps.setObject(2, deal.getBuyer().getId());
+            ps.setObject(3, deal.getRealty().getId());
             ps.setTimestamp(4, deal.getDm());
-            ps.setString(5, dealId.toString());
+            ps.setObject(5, dealId);
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -112,7 +112,7 @@ public class DealController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setString(1, dealId.toString());
+            ps.setObject(1, dealId);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,10 +131,10 @@ public class DealController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setString(1, deal.getId().toString());
-            ps.setString(2, deal.getSeller().getId().toString());
-            ps.setString(3, deal.getBuyer().getId().toString());
-            ps.setString(4, deal.getRealty().getId().toString());
+            ps.setObject(1, deal.getId());
+            ps.setObject(2, deal.getSeller().getId());
+            ps.setObject(3, deal.getBuyer().getId());
+            ps.setObject(4, deal.getRealty().getId());
             ps.setTimestamp(5, deal.getDm());
 
             rows = ps.executeUpdate();

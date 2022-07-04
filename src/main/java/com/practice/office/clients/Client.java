@@ -8,7 +8,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+
 public class Client {
     private UUID id;
     private String name;
@@ -16,4 +16,9 @@ public class Client {
     private String fathername;
     private String phone;
     private String email;
+
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 }

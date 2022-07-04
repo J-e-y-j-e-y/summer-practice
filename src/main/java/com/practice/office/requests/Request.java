@@ -41,4 +41,9 @@ public class Request {
     public void setStrDm(String dm) {
         this.dm = Timestamp.valueOf(dm);
     }
+
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 }

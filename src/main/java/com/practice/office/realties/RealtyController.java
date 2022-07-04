@@ -70,7 +70,7 @@ public class RealtyController extends AbstractController {
             ps.setInt(4, realty.getRoomNumber());
             ps.setDouble(5, realty.getPrice());
             ps.setString(6, realty.getCadastralNumber());
-            ps.setString(7, realtyId.toString());
+            ps.setObject(7, realtyId);
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -101,7 +101,7 @@ public class RealtyController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setString(1, realtyId.toString());
+            ps.setObject(1, realtyId);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,7 +120,7 @@ public class RealtyController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setString(1, realty.getId().toString());
+            ps.setObject(1, realty.getId());
             ps.setString(2, realty.getNeighbourhood());
             ps.setString(3, realty.getAddress());
             ps.setDouble(4, realty.getSquare());

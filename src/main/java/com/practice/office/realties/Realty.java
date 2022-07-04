@@ -8,7 +8,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class Realty {
     private UUID id;
     private String neighbourhood;
@@ -41,5 +40,10 @@ public class Realty {
 
     public void setStrPrice(String price) {
         this.price = Double.parseDouble(price);
+    }
+
+    @Override
+    public String toString() {
+        return id.toString();
     }
 }

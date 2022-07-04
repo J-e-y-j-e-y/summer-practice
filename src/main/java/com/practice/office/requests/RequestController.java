@@ -81,10 +81,10 @@ public class RequestController extends AbstractController {
         int rows = 0;
         try {
             ps.setString(1, request.getPurpose().name());
-            ps.setString(2, request.getClient().getId().toString());
-            ps.setString(3, request.getRealty().getId().toString());
+            ps.setObject(2, request.getClient().getId());
+            ps.setObject(3, request.getRealty().getId());
             ps.setTimestamp(4, request.getDm());
-            ps.setString(5, requestId.toString());
+            ps.setObject(5, requestId);
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -115,7 +115,7 @@ public class RequestController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setString(1, requestId.toString());
+            ps.setObject(1, requestId);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -134,10 +134,10 @@ public class RequestController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setString(1, request.getId().toString());
+            ps.setObject(1, request.getId());
             ps.setString(2, request.getPurpose().name());
-            ps.setString(3, request.getClient().getId().toString());
-            ps.setString(4, request.getRealty().getId().toString());
+            ps.setObject(3, request.getClient().getId());
+            ps.setObject(4, request.getRealty().getId());
             ps.setTimestamp(5, request.getDm());
 
             rows = ps.executeUpdate();

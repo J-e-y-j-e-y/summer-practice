@@ -68,7 +68,7 @@ public class ClientController extends AbstractController {
             ps.setString(3, client.getFathername());
             ps.setString(4, client.getPhone());
             ps.setString(5, client.getEmail());
-            ps.setString(6, client.getId().toString());
+            ps.setObject(6, client.getId());
             System.out.println(ps);
             rows = ps.executeUpdate();
         } catch (SQLException e) {
@@ -100,7 +100,7 @@ public class ClientController extends AbstractController {
         query = query.replace(TABLE, tableName);
         PreparedStatement ps = getPrepareStatement(query);
         try {
-            ps.setString(1, client.getId().toString());
+            ps.setObject(1, client.getId());
             rows = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,7 +119,7 @@ public class ClientController extends AbstractController {
         PreparedStatement ps = getPrepareStatement(query);
         int rows = 0;
         try {
-            ps.setString(1, client.getId().toString());
+            ps.setObject(1, client.getId());
             ps.setString(2, client.getName());
             ps.setString(3, client.getSurname());
             ps.setString(4, client.getFathername());

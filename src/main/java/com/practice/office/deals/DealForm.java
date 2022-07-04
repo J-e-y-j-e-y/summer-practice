@@ -76,7 +76,7 @@ public class DealForm extends FormLayout {
         realty.setItems(realtiesList);
 
         FormLayout formLayout = new FormLayout();
-        formLayout.addComponents(seller, buyer, realty, dm, components);
+        formLayout.addComponents(dm, components);
         VerticalLayout showClientLayout = new VerticalLayout(showSellerLayout, showBuyerLayout);
         HorizontalLayout main = new HorizontalLayout(formLayout, showClientLayout, showRealtyLayout);
         this.addComponents(main);
@@ -88,7 +88,7 @@ public class DealForm extends FormLayout {
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
-                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
                 UUID clientId = UUID.fromString(id);
                 showSellerForm.setClient(clientController.getEntityById(clientId));
@@ -102,7 +102,7 @@ public class DealForm extends FormLayout {
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
-                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
                 UUID clientId = UUID.fromString(id);
                 showBuyerForm.setClient(clientController.getEntityById(clientId));
@@ -116,7 +116,7 @@ public class DealForm extends FormLayout {
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
-                id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
+                //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
                 UUID realtyId = UUID.fromString(id);
                 showRealtyForm.setRealty(realtyController.getEntityById(realtyId));

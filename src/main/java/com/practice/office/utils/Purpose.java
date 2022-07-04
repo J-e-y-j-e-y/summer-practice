@@ -1,8 +1,11 @@
 package com.practice.office.utils;
 
-import lombok.ToString;
 
-@ToString
 public enum Purpose {
-    BUY,SALE
+    BUY,SALE;
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }
