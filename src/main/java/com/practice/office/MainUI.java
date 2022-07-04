@@ -159,7 +159,7 @@ public class MainUI extends UI {
             @Override
             public void buttonClick(Button.ClickEvent clickEvent) {
                 dealForm.setDeal(null);
-                dealGrid.setColumns("seller", "buyer", "realty", "dm");
+                dealGrid.setColumns("dm");
                 updateDeals();
                 dealfilterText.setPlaceholder("Filter by realty...");
                 dealfilterText.setValueChangeMode(ValueChangeMode.EAGER);

@@ -7,7 +7,9 @@ import com.practice.office.clients.ClientForm;
 import com.practice.office.realties.Realty;
 import com.practice.office.realties.RealtyController;
 import com.practice.office.realties.RealtyForm;
+import com.practice.office.requests.Request;
 import com.practice.office.utils.IdGenerator;
+import com.practice.office.utils.TimestampToDateConverter;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.event.selection.SingleSelectionEvent;
@@ -15,7 +17,6 @@ import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.Setter;
 import com.vaadin.ui.*;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -44,7 +45,7 @@ public class DealForm extends FormLayout {
     private RealtyForm showRealtyForm = new RealtyForm(ui, null);
     VerticalLayout showRealtyLayout = new VerticalLayout(showRealty, showRealtyForm);
 
-    private TextField dm = new TextField("dm");
+    private DateField dm = new DateField("dm");
 
     private Button add = new Button("Add");
     private Button update = new Button("Update");
@@ -123,7 +124,8 @@ public class DealForm extends FormLayout {
             }
         });
 
-        binder.bind(dm, Deal::getStrDm, Deal::setStrDm);
+        binder.forField(dm).withConverter(new TimestampToDateConverter())
+                .bind(Deal::getDm, Deal::setDm);
 
         binder.bind(seller, new ValueProvider<Deal, String>() {
             @Override
