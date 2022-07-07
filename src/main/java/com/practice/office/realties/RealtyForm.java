@@ -17,6 +17,7 @@ public class RealtyForm extends FormLayout {
     @Getter
     private MainUI ui;
     private RealtyController controller;
+    @Getter
     private final Realty EMPTY = new Realty();
 
     private TextField neighbourhood = new TextField("neighbourhood");

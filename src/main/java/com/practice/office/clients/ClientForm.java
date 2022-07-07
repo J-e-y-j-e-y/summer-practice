@@ -17,6 +17,7 @@ public class ClientForm extends FormLayout {
     @Getter
     private MainUI ui;
     private ClientController controller;
+    @Getter
     private final Client EMPTY = new Client();
 
     private TextField name = new TextField("name");

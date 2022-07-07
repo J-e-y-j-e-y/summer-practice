@@ -14,7 +14,9 @@ import java.util.Date;
 public class TimestampToDateConverter implements Converter<LocalDate, Timestamp> {
     @Override
     public Result<Timestamp> convertToModel(LocalDate date, ValueContext valueContext) {
-        Date d = Date.from(date.atStartOfDay(ZoneOffset.systemDefault()).toInstant());
+        Date d = new Date();
+        if(date != null)
+            d = Date.from(date.atStartOfDay(ZoneOffset.systemDefault()).toInstant());
         return Result.ok(new Timestamp(d.getTime()));
     }
 

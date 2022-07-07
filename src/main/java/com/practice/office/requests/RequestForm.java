@@ -19,6 +19,7 @@ import com.vaadin.ui.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.practice.office.utils.Constants.DASH;
@@ -89,12 +90,21 @@ public class RequestForm extends FormLayout {
         client.addSelectionListener(new SingleSelectionListener<String>() {
             @Override
             public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
-                String id = singleSelectionEvent.getSelectedItem().get();
+                Optional<String> item = singleSelectionEvent.getSelectedItem();
+                if(!item.isPresent()) {
+                    showClientForm.setClient(showClientForm.getEMPTY());
+                    return;
+                }
+                String id = item.get();
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
                 //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
+                if(DASH.equals(id)) {
+                    showClientForm.setClient(showClientForm.getEMPTY());
+                    return;
+                }
                 UUID clientId = UUID.fromString(id);
                 showClientForm.setClient(clientController.getEntityById(clientId));
             }
@@ -103,12 +113,21 @@ public class RequestForm extends FormLayout {
         realty.addSelectionListener(new SingleSelectionListener<String>() {
             @Override
             public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
-                String id = singleSelectionEvent.getSelectedItem().get();
+                Optional<String> item = singleSelectionEvent.getSelectedItem();
+                if(!item.isPresent()) {
+                    showRealtyForm.setRealty(showRealtyForm.getEMPTY());
+                    return;
+                }
+                String id = item.get();
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
                 //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
+                if(DASH.equals(id)) {
+                    showRealtyForm.setRealty(showRealtyForm.getEMPTY());
+                    return;
+                }
                 UUID realtyId = UUID.fromString(id);
                 showRealtyForm.setRealty(realtyController.getEntityById(realtyId));
             }
@@ -124,7 +143,7 @@ public class RequestForm extends FormLayout {
             }, new Setter<Request, String>() {
             @Override
             public void accept(Request request, String s) {
-                int clientId = Integer.parseInt(s.split(". ")[0]);
+                UUID clientId = UUID.fromString(s);
                 Client client = (Client) clientController.getEntityById(clientId);
                 request.setClient(client);
             }
@@ -140,7 +159,7 @@ public class RequestForm extends FormLayout {
         }, new Setter<Request, String>() {
             @Override
             public void accept(Request request, String s) {
-                int realtyId = Integer.parseInt(s.split(". ")[0]);
+                UUID realtyId = UUID.fromString(s);
                 Realty realty = (Realty) realtyController.getEntityById(realtyId);
                 request.setRealty(realty);
             }
@@ -163,8 +182,8 @@ public class RequestForm extends FormLayout {
 
     public void addButton(){
         setRequest(EMPTY);
-        showClientForm.setClient(null);
-        showRealtyForm.setRealty(null);
+        showClientForm.setClient(showClientForm.getEMPTY());
+        showRealtyForm.setRealty(showRealtyForm.getEMPTY());
         add.setVisible(true);
         update.setVisible(false);
         delete.setVisible(false);

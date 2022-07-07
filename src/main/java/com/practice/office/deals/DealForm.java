@@ -18,6 +18,7 @@ import com.vaadin.server.Setter;
 import com.vaadin.ui.*;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.practice.office.utils.Constants.DASH;
@@ -77,7 +78,7 @@ public class DealForm extends FormLayout {
         realty.setItems(realtiesList);
 
         FormLayout formLayout = new FormLayout();
-        formLayout.addComponents(dm, components);
+        formLayout.addComponents(seller, buyer, realty, dm, components);
         VerticalLayout showClientLayout = new VerticalLayout(showSellerLayout, showBuyerLayout);
         HorizontalLayout main = new HorizontalLayout(formLayout, showClientLayout, showRealtyLayout);
         this.addComponents(main);
@@ -85,12 +86,21 @@ public class DealForm extends FormLayout {
         seller.addSelectionListener(new SingleSelectionListener<String>() {
             @Override
             public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
-                String id = singleSelectionEvent.getSelectedItem().get();
+                Optional<String> item = singleSelectionEvent.getSelectedItem();
+                if(!item.isPresent()) {
+                    showSellerForm.setClient(showSellerForm.getEMPTY());
+                    return;
+                }
+                String id = item.get();
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
                 //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
+                if(DASH.equals(id)) {
+                    showSellerForm.setClient(showSellerForm.getEMPTY());
+                    return;
+                }
                 UUID clientId = UUID.fromString(id);
                 showSellerForm.setClient(clientController.getEntityById(clientId));
             }
@@ -99,12 +109,21 @@ public class DealForm extends FormLayout {
         buyer.addSelectionListener(new SingleSelectionListener<String>() {
             @Override
             public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
-                String id = singleSelectionEvent.getSelectedItem().get();
+                Optional<String> item = singleSelectionEvent.getSelectedItem();
+                if(!item.isPresent()) {
+                    showBuyerForm.setClient(showBuyerForm.getEMPTY());
+                    return;
+                }
+                String id = item.get();
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
                 //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
+                if(DASH.equals(id)) {
+                    showBuyerForm.setClient(showBuyerForm.getEMPTY());
+                    return;
+                }
                 UUID clientId = UUID.fromString(id);
                 showBuyerForm.setClient(clientController.getEntityById(clientId));
             }
@@ -113,12 +132,21 @@ public class DealForm extends FormLayout {
         realty.addSelectionListener(new SingleSelectionListener<String>() {
             @Override
             public void selectionChange(SingleSelectionEvent<String> singleSelectionEvent) {
-                String id = singleSelectionEvent.getSelectedItem().get();
+                Optional<String> item = singleSelectionEvent.getSelectedItem();
+                if(!item.isPresent()) {
+                    showRealtyForm.setRealty(showRealtyForm.getEMPTY());
+                    return;
+                }
+                String id = item.get();
                 System.out.println("id.indexOf(\"id=\") = " + id.indexOf("id="));
                 System.out.println("id.indexOf(\",\") = " + id.indexOf(","));
                 System.out.println("id = " + id);
                 //id = id.substring(id.indexOf("id=") + 3, id.indexOf(","));
                 System.out.println("id = " + id);
+                if(DASH.equals(id)) {
+                    showRealtyForm.setRealty(showRealtyForm.getEMPTY());
+                    return;
+                }
                 UUID realtyId = UUID.fromString(id);
                 showRealtyForm.setRealty(realtyController.getEntityById(realtyId));
             }
@@ -137,7 +165,7 @@ public class DealForm extends FormLayout {
         }, new Setter<Deal, String>() {
             @Override
             public void accept(Deal deal, String s) {
-                int clientId = Integer.parseInt(s.split(". ")[0]);
+                UUID clientId = UUID.fromString(s);
                 Client client = (Client) clientController.getEntityById(clientId);
                 deal.setSeller(client);
             }
@@ -153,7 +181,7 @@ public class DealForm extends FormLayout {
         }, new Setter<Deal, String>() {
             @Override
             public void accept(Deal deal, String s) {
-                int clientId = Integer.parseInt(s.split(". ")[0]);
+                UUID clientId = UUID.fromString(s);
                 Client client = (Client) clientController.getEntityById(clientId);
                 deal.setBuyer(client);
             }
@@ -169,7 +197,7 @@ public class DealForm extends FormLayout {
         }, new Setter<Deal, String>() {
             @Override
             public void accept(Deal deal, String s) {
-                int realtyId = Integer.parseInt(s.split(". ")[0]);
+                UUID realtyId = UUID.fromString(s);
                 Realty realty = (Realty) realtyController.getEntityById(realtyId);
                 deal.setRealty(realty);
             }
@@ -192,6 +220,9 @@ public class DealForm extends FormLayout {
 
     public void addButton(){
         setDeal(EMPTY);
+        showSellerForm.setClient(showSellerForm.getEMPTY());
+        showBuyerForm.setClient(showBuyerForm.getEMPTY());
+        showRealtyForm.setRealty(showRealtyForm.getEMPTY());
         add.setVisible(true);
         update.setVisible(false);
         delete.setVisible(false);
